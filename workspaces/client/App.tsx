@@ -1,5 +1,5 @@
 import axios from './axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, Linking } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Header, Button, Icon } from 'react-native-elements';
@@ -22,8 +22,6 @@ export default function App() {
 			// await AsyncStorage.setItem('coords', JSON.stringify(data));
 		} catch (error) {
 			setCoords(getFakeCoords());
-
-			console.error(error);
 		}
 	}
 
@@ -61,7 +59,9 @@ export default function App() {
 	// 	}
 	// }
 
-	// getCachedCoords();
+	useEffect(() => {
+		getCoords();
+	}, []);
 
 	return (
 		<SafeAreaProvider>

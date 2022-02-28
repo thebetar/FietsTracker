@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
-import MapView, { Region, Marker, LatLng } from 'react-native-maps';
+import MapView, { Region, LatLng, Marker } from 'react-native-maps';
 import { Coords } from '../types';
 import BicycicleImage from '../assets/bicycle.png';
 
@@ -23,12 +23,15 @@ export default function Maps({ coords }: { coords: Coords }) {
 	return (
 		<View style={styles.container}>
 			<Text h4>🚲 Hier is uw fiets 🚲</Text>
-			<MapView style={styles.map} region={getRegion()}>
+			<MapView
+				provider={'google'}
+				style={styles.map}
+				region={getRegion()}
+			>
 				<Marker
-					title="Uw fiets"
-					image={BicycicleImage}
+					title={'Uw fiets'}
 					coordinate={getCoords()}
-					pinColor="#333333"
+					image={BicycicleImage}
 				/>
 			</MapView>
 		</View>
