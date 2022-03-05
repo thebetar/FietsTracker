@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const baseURL = 'https://lora-fiets-tracker-marcopolo.loca.lt';
+export const baseURL = 'http://lora-fiets-tracker-marcopolo.loca.lt';
 
 const instance = axios.create({
 	baseURL: baseURL

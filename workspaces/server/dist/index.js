@@ -42,27 +42,29 @@ exports.__esModule = true;
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var localtunnel_1 = __importDefault(require("localtunnel"));
+var index_1 = __importDefault(require("./routes/users/index"));
+var index_2 = __importDefault(require("./routes/tracking/index"));
+var index_3 = __importDefault(require("./routes/auth/index"));
+var auth_1 = __importDefault(require("./middleware/auth"));
+var db_1 = __importDefault(require("./modules/db"));
+var dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 var PORT = 3000;
 var app = (0, express_1["default"])();
 app.use((0, cors_1["default"])());
+app.use(express_1["default"].json());
 app.get('/', function (req, res) {
     res.send('Server is working');
 });
-var BASE_LATITUDE = 52.335;
-var BASE_LONGITUDE = 4.86;
-app.get('/coords', function (req, res) {
-    var latitude = BASE_LATITUDE + Math.random() / 12;
-    var longitude = BASE_LONGITUDE + Math.random() / 12;
-    res.status(200).send({
-        latitude: latitude,
-        longitude: longitude
-    });
-});
+app.use('/auth', index_3["default"]);
+app.use('/users', auth_1["default"], index_1["default"]);
+app.use('/tracking', auth_1["default"], index_2["default"]);
 app.listen(PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, function () {
     var tunnel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                db_1["default"].init();
                 console.log("App running on port " + (PORT || 3000));
                 return [4, (0, localtunnel_1["default"])({
                         port: PORT || 3000,
