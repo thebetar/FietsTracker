@@ -3,11 +3,11 @@ import { Linking, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import MapView, { Region, LatLng, Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Coords } from '../types';
-import BicycicleImage from '../assets/bicycle.png';
-import axios from '../axios';
+import { Coords } from '../../types';
+import BicycicleImage from '../../assets/bicycle.png';
+import axios from '../../axios';
 
-export default function Maps({ navigate }: { navigate: any }) {
+export default function MapsScreen({ navigate }: { navigate: any }) {
 	const [coords, setCoords] = useState<Coords>({
 		latitude: undefined,
 		longitude: undefined

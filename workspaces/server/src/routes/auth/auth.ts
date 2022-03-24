@@ -25,7 +25,8 @@ export default class AuthRouter {
 					const user = users[0];
 
 					res.status(200).json({
-						token: AuthRouter.generateAccessToken(user)
+						token: AuthRouter.generateAccessToken(user),
+						user
 					});
 				} else {
 					res.status(400).json({ message: 'Gegevens bestaan niet' });
@@ -67,7 +68,8 @@ export default class AuthRouter {
 				);
 
 				res.status(200).json({
-					token: AuthRouter.generateAccessToken(user)
+					token: AuthRouter.generateAccessToken(user),
+					user
 				});
 			} else {
 				res.status(400).json({
