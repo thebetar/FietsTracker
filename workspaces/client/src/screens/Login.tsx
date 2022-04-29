@@ -15,11 +15,10 @@ export default function LoginScreen({ navigation }: any) {
 	} = useContext(LoginContext) as LoginContext;
 
 	function loginAttempt(type: string) {
-		const callback = () => navigation.navigate('Maps');
 		if (type === 'login') {
-			login(email, password, callback);
+			login(email, password);
 		} else if (type === 'signup') {
-			signup(email, password, controlPassword, callback);
+			signup(email, password, controlPassword);
 		}
 	}
 

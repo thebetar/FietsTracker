@@ -6,10 +6,13 @@ import {
 } from '@react-navigation/drawer';
 import React, { useContext, useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
+
 import { LoginContext } from '../context/LoginContext';
+
 import LoginScreen from './Login';
 import MapsScreen from './Maps';
 import ProfileScreen from './Profile';
+import TrackersScreen from './Trackers';
 
 const Drawer = createDrawerNavigator();
 
@@ -48,6 +51,15 @@ export default function LayoutScreen() {
 						options={{
 							drawerIcon: () => (
 								<MaterialIcons name="map" size={20} />
+							)
+						}}
+					/>
+					<Drawer.Screen
+						name="Trackers"
+						component={TrackersScreen}
+						options={{
+							drawerIcon: () => (
+								<MaterialIcons name="track-changes" size={20} />
 							)
 						}}
 					/>

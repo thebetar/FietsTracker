@@ -53,18 +53,18 @@ var PORT = 3000;
 var app = (0, express_1["default"])();
 app.use((0, cors_1["default"])());
 app.use(express_1["default"].json());
-app.get('/', function (req, res) {
-    res.send('Server is working');
-});
 app.use('/auth', index_3["default"]);
 app.use('/users', auth_1["default"], index_1["default"]);
 app.use('/tracking', auth_1["default"], index_2["default"]);
+app.use('*', function (req, res) {
+    res.send('Server is working');
+});
 app.listen(PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 prisma_1["default"].init();
-                console.log("App running on port ".concat(PORT || 3000));
+                console.log("App running on port " + (PORT || 3000));
                 if (process.env.DEV === 'true') {
                     return [2];
                 }
@@ -86,7 +86,7 @@ function openTunnel() {
                     })];
                 case 1:
                     tunnel = _a.sent();
-                    console.log("Localtunnel running on ".concat(tunnel.url));
+                    console.log("Localtunnel running on " + tunnel.url);
                     tunnel.on('close', function () {
                         console.log('Localtunnel closed');
                     });

@@ -9,8 +9,8 @@ import axios from '../../axios';
 
 export default function MapsScreen({ navigate }: { navigate: any }) {
 	const [coords, setCoords] = useState<Coords>({
-		latitude: undefined,
-		longitude: undefined
+		latitude: 52.335,
+		longitude: 4.86
 	});
 
 	async function getCoords() {
@@ -30,10 +30,6 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 			alert('Er ging iets fout bij het ophalen...');
 			getCachedCoords();
 		}
-	}
-
-	function isCoords() {
-		return coords.latitude !== undefined && coords.longitude !== undefined;
 	}
 
 	async function getCachedCoords() {

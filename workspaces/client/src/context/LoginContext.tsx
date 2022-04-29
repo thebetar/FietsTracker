@@ -104,7 +104,10 @@ export default function LoginProvider({ children, navigation }: any) {
 
 		if (token) {
 			(axios.defaults.headers as any)['authorization'] = token;
-			navigation.navigate('Maps');
+			setLoggedIn(true);
+
+			const user = (await AsyncStorage.getItem('user')) as string;
+			setUser(JSON.parse(user));
 		}
 	}
 
@@ -126,6 +129,9 @@ export default function LoginProvider({ children, navigation }: any) {
 		(axios.defaults.headers as any)['authorization'] = token;
 
 		await AsyncStorage.setItem('token', token).catch(console.error);
+		await AsyncStorage.setItem('user', JSON.stringify(user)).catch(
+			console.error
+		);
 
 		setError('');
 		setUser(user);

@@ -1,4 +1,4 @@
-import { Coords } from './../../../../client/types';
+import { Coords } from '../../types';
 export default class TrackingRouter {
 	static getCoords(req, res) {
 		const BASE_LATITUDE = 52.335;

@@ -1,11 +1,7 @@
-import fs from 'fs';
+import trackers from './mocks/trackers-mock';
 
 export default class TrackersRouter {
 	static getTrackers(req, res) {
-		const data = fs.readFileSync('./mocks/trackers.json', {
-			encoding: 'utf8'
-		});
-
-		res.json({ trackers: JSON.parse(data) });
+		res.json({ trackers });
 	}
 }
