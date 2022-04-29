@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { v4 } from 'uuid';
-import DbConnection from '../../modules/db';
-import { compare, encrypt } from '../../modules/encrypt';
+import PrismaConnection from '../../services/prisma';
+import { compare, encrypt } from '../../services/encrypt';
 import { User } from '../../types';
 
 export default class AuthRouter {
@@ -14,16 +13,13 @@ export default class AuthRouter {
 			if (req.body && req.body.email && req.body.password) {
 				const { email, password } = req.body;
 
-				const users = (await DbConnection.query(
-					`SELECT * FROM users WHERE email = "${email}"`
-				)) as User[];
+				const user = (await PrismaConnection.client.user.findFirst({
+					where: {
+						email: email.toLowerCase()
+					}
+				})) as User;
 
-				if (
-					users.length === 1 &&
-					(await compare(password.trim(), users[0].password))
-				) {
-					const user = users[0];
-
+				if (user && (await compare(password.trim(), user.password))) {
 					res.status(200).json({
 						token: AuthRouter.generateAccessToken(user),
 						user
@@ -49,27 +45,30 @@ export default class AuthRouter {
 			if (req.body && req.body.email && req.body.password) {
 				const { email, password } = req.body;
 
-				const users = (await DbConnection.query(
-					`SELECT * FROM users WHERE email = "${email}"`
-				)) as User[];
+				const checkUser = (await PrismaConnection.client.user.findFirst(
+					{
+						where: {
+							email: email.toLowerCase()
+						}
+					}
+				)) as User;
 
-				if (users.length !== 0) {
+				if (checkUser) {
 					res.status(400).json({ message: 'Users already exists' });
 					return;
 				}
 
 				const user = {
-					id: v4(),
-					email: email,
+					email,
 					password: await encrypt(password)
 				};
-				await DbConnection.run(
-					`INSERT INTO users VALUES ("${user.id}", "${user.email}", "${user.password}")`
-				);
+				const result = (await PrismaConnection.client.user.create({
+					data: user
+				})) as User;
 
 				res.status(200).json({
-					token: AuthRouter.generateAccessToken(user),
-					user
+					token: AuthRouter.generateAccessToken(result),
+					user: result
 				});
 			} else {
 				res.status(400).json({

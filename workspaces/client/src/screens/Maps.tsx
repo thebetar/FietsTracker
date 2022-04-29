@@ -37,7 +37,9 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 	}
 
 	async function getCachedCoords() {
-		const coords = await AsyncStorage.getItem('coords');
+		const coords = await AsyncStorage.getItem('coords').catch(
+			console.error
+		);
 
 		if (coords) {
 			setCoords(coords as any);
@@ -50,7 +52,9 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 		const lat = Number(coords.latitude).toFixed(7);
 		const RESULT_URL = `${BASE_URL}${lat},${lng}`;
 
-		const supported = await Linking.canOpenURL(RESULT_URL);
+		const supported = await Linking.canOpenURL(RESULT_URL).catch(
+			console.error
+		);
 		if (supported) {
 			Linking.openURL(RESULT_URL);
 		}

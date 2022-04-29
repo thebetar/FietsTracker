@@ -46,7 +46,7 @@ var index_1 = __importDefault(require("./routes/users/index"));
 var index_2 = __importDefault(require("./routes/tracking/index"));
 var index_3 = __importDefault(require("./routes/auth/index"));
 var auth_1 = __importDefault(require("./middleware/auth"));
-var db_1 = __importDefault(require("./modules/db"));
+var prisma_1 = __importDefault(require("./services/prisma"));
 var dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 var PORT = 3000;
@@ -60,23 +60,38 @@ app.use('/auth', index_3["default"]);
 app.use('/users', auth_1["default"], index_1["default"]);
 app.use('/tracking', auth_1["default"], index_2["default"]);
 app.listen(PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, function () {
-    var tunnel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                db_1["default"].init();
-                console.log("App running on port " + (PORT || 3000));
-                return [4, (0, localtunnel_1["default"])({
-                        port: PORT || 3000,
-                        subdomain: 'lora-fiets-tracker-marcopolo'
-                    })];
+                prisma_1["default"].init();
+                console.log("App running on port ".concat(PORT || 3000));
+                if (process.env.DEV === 'true') {
+                    return [2];
+                }
+                return [4, openTunnel()];
             case 1:
-                tunnel = _a.sent();
-                console.log("Localtunnel running on " + tunnel.url);
-                tunnel.on('close', function () {
-                    console.log('Localtunnel closed');
-                });
+                _a.sent();
                 return [2];
         }
     });
 }); });
+function openTunnel() {
+    return __awaiter(this, void 0, void 0, function () {
+        var tunnel;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, (0, localtunnel_1["default"])({
+                        port: PORT || 3000,
+                        subdomain: 'lora-fiets-tracker-marcopolo'
+                    })];
+                case 1:
+                    tunnel = _a.sent();
+                    console.log("Localtunnel running on ".concat(tunnel.url));
+                    tunnel.on('close', function () {
+                        console.log('Localtunnel closed');
+                    });
+                    return [2];
+            }
+        });
+    });
+}

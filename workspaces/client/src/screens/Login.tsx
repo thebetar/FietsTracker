@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, Input, Button } from 'react-native-elements';
-import axios from '../../axios';
+import { Card, Input, Button, Text } from 'react-native-elements';
 import { LoginContext, User } from '../context/LoginContext';
 
 export default function LoginScreen({ navigation }: any) {
@@ -11,53 +10,42 @@ export default function LoginScreen({ navigation }: any) {
 	const [loginToggle, setLoginToggle] = useState(true);
 
 	const {
-		actions: { login, logout }
+		error,
+		actions: { login, signup }
 	} = useContext(LoginContext) as LoginContext;
 
-	async function loginAttempt(type: string) {
-		try {
-			if (type === 'signup' && password !== controlPassword) {
-				throw 'Wachtwoorden komen niet overeen';
-			}
-
-			const { data } = await axios.post(`/auth/${type}`, {
-				email,
-				password
-			});
-
-			if (data.token) {
-				const { token, user } = data;
-				(axios.defaults.headers as any)['authorization'] = token;
-				login(user);
-				navigation.navigate('Maps');
-				return;
-			}
-			throw 'Er ging iets fout';
-		} catch (error: any) {
-			if (typeof error === 'string') {
-				alert(error);
-			} else {
-				alert('Verkeerde inloggegevens');
-			}
-			logout();
+	function loginAttempt(type: string) {
+		const callback = () => navigation.navigate('Maps');
+		if (type === 'login') {
+			login(email, password, callback);
+		} else if (type === 'signup') {
+			signup(email, password, controlPassword, callback);
 		}
 	}
 
 	return (
 		<View style={styles.formContainer}>
 			<Card>
-				<Card.Title h3>Inloggen</Card.Title>
+				<Card.Title h3>
+					{loginToggle ? 'Inloggen' : 'Maak aan'}
+				</Card.Title>
+				{error ? (
+					<Text h4 style={{ color: 'red', textAlign: 'center' }}>
+						{error}
+					</Text>
+				) : null}
 				<Card.Divider />
 				<Input
 					onChangeText={setEmail}
 					leftIcon={{ name: 'email' }}
-					placeholder="Email	"
+					placeholder="Email"
 				/>
 				<Input
 					onChangeText={setPassword}
 					leftIcon={{ name: 'lock' }}
 					placeholder="Wachtwoord"
 					secureTextEntry={true}
+					autoCapitalize="none"
 				/>
 				{!loginToggle ? (
 					<Input
@@ -65,6 +53,7 @@ export default function LoginScreen({ navigation }: any) {
 						leftIcon={{ name: 'lock' }}
 						placeholder="Controle wachtwoord"
 						secureTextEntry={true}
+						autoCapitalize="none"
 					/>
 				) : null}
 				<Button

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import DbConnection from '../modules/db';
+import PrismaConnection from '../services/prisma';
 import { User } from '../types';
 
 export default async function AuthMiddleware(req, res, next): Promise<void> {
@@ -14,12 +14,16 @@ export default async function AuthMiddleware(req, res, next): Promise<void> {
 			if (!(decodedToken.email && decodedToken.password)) {
 				throw 'Token does not contain the right info';
 			}
-			const user = (await DbConnection.query(
-				`SELECT * FROM users WHERE email = "${decodedToken.email}" AND password = "${decodedToken.password}"`
-			)) as User[];
-			if (user.length === 0) {
+			const user = (await PrismaConnection.client.user.findFirst({
+				where: {
+					email: decodedToken.email,
+					password: decodedToken.password
+				}
+			})) as User;
+			if (!user) {
 				throw 'Email in token not found!';
 			}
+			req.user = user;
 			next();
 		} else {
 			res.status(403).json({

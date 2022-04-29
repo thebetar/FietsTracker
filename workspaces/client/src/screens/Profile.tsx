@@ -1,10 +1,25 @@
 import { useContext } from 'react';
-import { View } from 'react-native';
-import { Card, Text } from 'react-native-elements';
+import { View, StyleSheet } from 'react-native';
+import { Button, Card, Text } from 'react-native-elements';
 import { LoginContext } from '../context/LoginContext';
+import axios from '../../axios';
 
 export default function ProfileScreen() {
-	const { user } = useContext(LoginContext) as LoginContext;
+	const {
+		user,
+		actions: { logout }
+	} = useContext(LoginContext) as LoginContext;
+
+	async function deleteUser() {
+		try {
+			await axios.delete(`/user/${user.id}`);
+
+			logout();
+		} catch (error) {
+			console.error(error);
+			alert('Er ging iets fout bij het verwijderen');
+		}
+	}
 
 	return (
 		<View>
@@ -35,6 +50,21 @@ export default function ProfileScreen() {
 					{user.email}
 				</Text>
 			</Card>
+			<Button
+				title="Verwijder gebruiker"
+				containerStyle={styles.deleteButtonContainer}
+				buttonStyle={styles.deleteButton}
+				onPress={() => deleteUser()}
+			/>
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	deleteButtonContainer: {
+		margin: 10
+	},
+	deleteButton: {
+		backgroundColor: 'crimson'
+	}
+});

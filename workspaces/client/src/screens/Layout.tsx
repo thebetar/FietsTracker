@@ -4,7 +4,7 @@ import {
 	DrawerItem,
 	DrawerItemList
 } from '@react-navigation/drawer';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoginContext } from '../context/LoginContext';
 import LoginScreen from './Login';
@@ -13,11 +13,15 @@ import ProfileScreen from './Profile';
 
 const Drawer = createDrawerNavigator();
 
-export default function LayoutScreen({ navigation }: any) {
+export default function LayoutScreen() {
 	const {
 		loggedIn,
-		actions: { logout }
+		actions: { autoLogin, logout }
 	} = useContext(LoginContext) as LoginContext;
+
+	useEffect(() => {
+		autoLogin();
+	}, []);
 
 	return (
 		<Drawer.Navigator
