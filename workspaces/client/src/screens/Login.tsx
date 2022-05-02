@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Card, Input, Button, Text } from 'react-native-elements';
 import { LoginContext, User } from '../context/LoginContext';
 
-export default function LoginScreen({ navigation }: any) {
+export default function LoginScreen() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [controlPassword, setControlPassword] = useState('');
@@ -86,7 +86,7 @@ export default function LoginScreen({ navigation }: any) {
 	);
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
 	formContainer: {
 		height: '80%',
 		width: '95%',

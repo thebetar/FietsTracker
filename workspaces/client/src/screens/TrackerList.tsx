@@ -6,7 +6,7 @@ import { Tracker } from '../../types';
 import axios from '../../axios';
 import TrackerListItem from '../components/Trackers/TrackerListItem';
 
-export default function TrackersScreen() {
+export default function TrackersScreen({ navigation }: any) {
 	const [trackers, setTrackers] = useState<Tracker[]>([]);
 
 	useEffect(() => {
@@ -25,13 +25,26 @@ export default function TrackersScreen() {
 	}
 
 	function renderItem({ item, index }: { item: Tracker; index: number }) {
-		return <TrackerListItem tracker={item} index={index} />;
+		return (
+			<TrackerListItem
+				tracker={item}
+				index={index}
+				navigation={navigation}
+			/>
+		);
 	}
 
 	return (
 		<>
 			<Card>
 				<Card.Title>Trackers</Card.Title>
+				<FAB
+					onPress={getTrackers}
+					icon={{ name: 'refresh', color: 'white' }}
+					title="Refresh"
+					color="blue"
+					style={{ marginBottom: 8 }}
+				/>
 				<Card.Divider />
 				{trackers.length === 0 ? (
 					<Text h4>Laden...</Text>
@@ -43,12 +56,6 @@ export default function TrackersScreen() {
 						scrollEnabled={true}
 					/>
 				)}
-				<FAB
-					onPress={getTrackers}
-					placement="right"
-					icon={{ name: 'refresh', color: 'white' }}
-					color="blue"
-				/>
 			</Card>
 		</>
 	);

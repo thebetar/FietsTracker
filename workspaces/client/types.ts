@@ -23,5 +23,6 @@ export type Log = {
 export type Tracker = {
 	id: string;
 	name?: string;
+	type?: string;
 	logs?: Coords[];
 };

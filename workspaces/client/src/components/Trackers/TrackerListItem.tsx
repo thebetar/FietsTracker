@@ -1,14 +1,18 @@
 import { useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { ListItem, Avatar, Text } from 'react-native-elements';
 import { Coords, Tracker } from '../../../types';
 import BicycleAvatarImage from '../../../assets/bicycle_avatar.png';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function TrackerListItem({
 	tracker,
-	index
+	index,
+	navigation
 }: {
 	tracker: Tracker;
 	index: number;
+	navigation: any;
 }) {
 	const [expanded, setExpanded] = useState(false);
 
@@ -37,9 +41,9 @@ export default function TrackerListItem({
 						source={BicycleAvatarImage}
 						size={35}
 						rounded
-						avatarStyle={{
-							borderWidth: 1,
-							borderColor: '#ccc'
+						avatarStyle={styles.avatar}
+						containerStyle={{
+							marginRight: 8
 						}}
 					/>
 					<ListItem.Content>
@@ -48,6 +52,7 @@ export default function TrackerListItem({
 						</ListItem.Title>
 						<ListItem.Subtitle>
 							Tracker #{index + 1}
+							<Text></Text>
 						</ListItem.Subtitle>
 					</ListItem.Content>
 				</>
@@ -55,16 +60,51 @@ export default function TrackerListItem({
 			isExpanded={expanded}
 			onPress={() => setExpanded(!expanded)}
 		>
-			{tracker.logs?.map((log: Coords) => (
-				<ListItem key={log.date}>
-					<ListItem.Title>
-						X {log.longitude}, Y {log.latitude}
-					</ListItem.Title>
-					<ListItem.Subtitle>
-						{parseDateString(log.date || '')}
-					</ListItem.Subtitle>
-				</ListItem>
-			))}
+			{expanded ? (
+				<>
+					{tracker.logs?.map((log: Coords) => (
+						<ListItem key={log.date}>
+							<ListItem.Title>
+								X {log.longitude}, Y {log.latitude}
+							</ListItem.Title>
+							<ListItem.Subtitle>
+								{parseDateString(log.date || '')}
+							</ListItem.Subtitle>
+						</ListItem>
+					))}
+					<TouchableOpacity
+						onPress={() =>
+							navigation.navigate('TrackerEdit', { tracker })
+						}
+					>
+						<ListItem
+							key={tracker.id + '-edit'}
+							style={styles.editContainer}
+						>
+							<ListItem.Title style={styles.editTitle}>
+								Edit <MaterialIcons name="edit" />
+							</ListItem.Title>
+						</ListItem>
+					</TouchableOpacity>
+				</>
+			) : null}
 		</ListItem.Accordion>
 	);
 }
+
+const styles = StyleSheet.create({
+	avatar: {
+		borderWidth: 1,
+		borderColor: '#ccc'
+	},
+	editTitle: {
+		textAlign: 'center',
+		fontSize: 18,
+		width: '100%',
+		fontWeight: '600'
+	},
+	editContainer: {
+		borderWidth: 1,
+		borderColor: '#ccc'
+	}
+});

@@ -1,11 +1,13 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"allowJs": true,
+		"module": "CommonJS",
 		"removeComments": true,
 		"esModuleInterop": true,
 		"outDir": "dist",
 		"rootDir": "./src",
-		"target": "ES3"
+		"target": "ES3",
+		"resolveJsonModule": true
 	},
 	"files": ["src/index.ts"],
 	"include": ["src/**/*"]
