@@ -92,11 +92,10 @@ export default function LoginProvider({ children, navigation }: any) {
 	}
 
 	async function logout() {
-		await AsyncStorage.removeItem('token').catch(console.error);
+		await AsyncStorage.clear();
+
 		setLoggedIn(false);
 		setUser({});
-
-		navigation.navigate('Login');
 	}
 
 	async function autoLogin() {

@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
 	return (
 		<View style={styles.formContainer}>
-			<Card>
+			<Card containerStyle={{ width: '90%' }}>
 				<Card.Title h3>
 					{loginToggle ? 'Inloggen' : 'Maak aan'}
 				</Card.Title>
@@ -88,10 +88,11 @@ export default function LoginScreen() {
 
 export const styles = StyleSheet.create({
 	formContainer: {
-		height: '80%',
-		width: '95%',
+		height: '100%',
+		width: '100%',
 		display: 'flex',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 	button: {
 		padding: 8,

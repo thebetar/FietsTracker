@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import localtunnel from 'localtunnel';
 import UsersRouter from './routes/users/index';
-import TrackingRouter from './routes/tracking/index';
 import AuthRouter from './routes/auth/index';
+import TrackersRouter from './routes/trackers/index';
 import AuthMiddleware from './middleware/auth';
 import PrismaConnection from './services/prisma';
 import { config as dotEnvConfig } from 'dotenv';
@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use('/auth', AuthRouter);
 app.use('/users', AuthMiddleware, UsersRouter);
-app.use('/tracking', AuthMiddleware, TrackingRouter);
+app.use('/trackers', AuthMiddleware, TrackersRouter);
 
 app.use('*', (req, res) => {
 	res.send('Server is working');

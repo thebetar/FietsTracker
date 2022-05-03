@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button, Card, Input, Text } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from '../../axios';
 import { Tracker } from '../../types';
@@ -24,17 +25,17 @@ export default function TrackerEditScreen({
 
 		const {
 			data: { tracker }
-		} = await axios.get(`/tracking/trackers/${id}`);
+		} = await axios.get(`/trackers/${id}`);
 
 		setTracker(tracker);
 	}
 
 	async function saveTracker() {
-		const {
-			data: { trackers }
-		} = await axios.put(`/tracking/trackers/${tracker?.id}`, tracker);
+		const newTracker = await axios.put(`/trackers/${tracker?.id}`, tracker);
 
-		navigation.navigate('TrackerList');
+		await AsyncStorage.setItem('tracker', JSON.stringify(newTracker));
+
+		navigation.navigate('TrackerList', { tracker: newTracker });
 	}
 
 	return (
@@ -61,7 +62,7 @@ export default function TrackerEditScreen({
 							}
 						/>
 						<Picker
-							selectedValue={tracker?.type || 'bike'}
+							selectedValue={tracker?.type || 'fiets'}
 							onValueChange={(value) =>
 								setTracker({
 									...tracker,
@@ -69,10 +70,17 @@ export default function TrackerEditScreen({
 								} as Tracker)
 							}
 						>
-							<Picker.Item label="Fiets" value="bike" />
-							<Picker.Item label="Aanhangwagen" value="trailer" />
-							<Picker.Item label="Motorfiets" value="motor" />
-							<Picker.Item label="Overig" value="other" />
+							<Picker.Item label="Fiets" value="fiets" />
+							<Picker.Item
+								label="Aanhangwagen"
+								value="aanhangwagen"
+							/>
+							<Picker.Item label="Scooter" value="scooter" />
+							<Picker.Item
+								label="Motorfiets"
+								value="motorfiets"
+							/>
+							<Picker.Item label="Overig" value="tracker" />
 						</Picker>
 						<Card.Divider />
 						<Button

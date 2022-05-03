@@ -1,26 +1,46 @@
 import { useState, useEffect } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
-import MapView, { Region, LatLng, Marker } from 'react-native-maps';
+import MapView, { Region, Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Coords } from '../../types';
+import { useFocusEffect } from '@react-navigation/native';
+
+import { Coords, Log, Tracker } from '../../types';
 import BicycicleImage from '../../assets/bicycle.png';
 import axios from '../../axios';
 
-export default function MapsScreen({ navigate }: { navigate: any }) {
-	const [coords, setCoords] = useState<Coords>({
-		latitude: 52.335,
-		longitude: 4.86
-	});
+export default function MapsScreen({
+	navigate,
+	route
+}: {
+	navigate: any;
+	route: any;
+}) {
+	const [coords, setCoords] = useState<Coords>(DEFAULT_COORDS);
+	const [errorMessage, setErrorMessage] = useState<string>('');
+	const [tracker, setTracker] = useState<Tracker | null>(null);
 
 	async function getCoords() {
 		try {
-			const { data } = await axios.get('/tracking/coords');
+			if (route?.params?.tracker?.id) {
+				const tracker = route.params.tracker;
 
-			setCoords(data);
+				const {
+					data: { coords }
+				} = await axios.get(`/trackers/coords/${tracker.id}`);
 
-			await AsyncStorage.clear();
-			await AsyncStorage.setItem('coords', JSON.stringify(data));
+				setCoords(parseCoords(coords));
+				setTracker(tracker);
+
+				await AsyncStorage.setItem('tracker', JSON.stringify(tracker));
+			} else {
+				if (await getCachedCoords()) {
+					return;
+				}
+
+				setCoords(DEFAULT_COORDS);
+				setErrorMessage('Geen tracker geselecteerd');
+			}
 		} catch (error: any) {
 			if (error && error.response && error.response.status === 403) {
 				alert('Niet ingelogd.');
@@ -28,18 +48,24 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 				return;
 			}
 			alert('Er ging iets fout bij het ophalen...');
-			getCachedCoords();
 		}
 	}
 
-	async function getCachedCoords() {
-		const coords = await AsyncStorage.getItem('coords').catch(
-			console.error
+	async function getCachedCoords(): Promise<boolean> {
+		const tracker = JSON.parse(
+			(await AsyncStorage.getItem('tracker').catch(console.error)) || ''
 		);
 
-		if (coords) {
-			setCoords(coords as any);
+		if (tracker) {
+			const {
+				data: { coords }
+			} = await axios.get(`/trackers/coords/${tracker.id}`);
+
+			setCoords(parseCoords(coords));
+			setTracker(tracker);
+			return true;
 		}
+		return false;
 	}
 
 	async function goToMaps() {
@@ -56,28 +82,35 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 		}
 	}
 
-	function parseCoords(): LatLng {
-		return {
-			latitude: coords.latitude || 52.378,
-			longitude: coords.longitude || 4.9
-		};
-	}
-
 	function getRegion(): Region {
 		return {
-			...parseCoords(),
+			...coords,
 			latitudeDelta: 0.018,
 			longitudeDelta: 0.018
 		};
 	}
 
-	useEffect(() => {
-		getCachedCoords();
-	}, []);
+	function parseCoords(coords: Log) {
+		return {
+			longitude: Number(coords.longitude),
+			latitude: Number(coords.latitude)
+		};
+	}
+
+	useFocusEffect(() => {
+		getCoords();
+	});
 
 	return (
 		<View style={styles.mapsContainer}>
-			<Text h4>🚲 Hier is uw fiets 🚲</Text>
+			<Text h3 h3Style={{ fontSize: 24 }}>
+				🤯 Hier is uw {tracker ? tracker.type : ''} 🤯
+			</Text>
+			{tracker ? (
+				<Text h4 h4Style={{ fontSize: 18, fontWeight: '100' }}>
+					{tracker.name}
+				</Text>
+			) : null}
 			<MapView
 				provider={'google'}
 				style={styles.map}
@@ -85,10 +118,15 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 			>
 				<Marker
 					title={'Uw fiets'}
-					coordinate={parseCoords()}
+					coordinate={coords}
 					image={BicycicleImage}
 				/>
 			</MapView>
+			<View>
+				<Text h4 h4Style={styles.error}>
+					{errorMessage}
+				</Text>
+			</View>
 			<View style={styles.innerMapsContainer}>
 				<Button
 					title={'🤔 \nWaar is mijn fiets?'}
@@ -113,12 +151,18 @@ export default function MapsScreen({ navigate }: { navigate: any }) {
 	);
 }
 
+const DEFAULT_COORDS: Coords = {
+	latitude: 52.335,
+	longitude: 4.86
+};
+
 const styles = StyleSheet.create({
 	mapsContainer: {
 		flexDirection: 'column',
 		backgroundColor: '#fff',
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		height: '100%'
 	},
 	innerMapsContainer: {
 		flexDirection: 'row',
@@ -147,5 +191,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#a89732',
 		borderColor: '#4a4216',
 		borderWidth: 2
-	}
+	},
+	error: { fontSize: 18, color: 'red', margin: 8 }
 });

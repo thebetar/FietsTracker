@@ -3,6 +3,9 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { ListItem, Avatar, Text } from 'react-native-elements';
 import { Coords, Tracker } from '../../../types';
 import BicycleAvatarImage from '../../../assets/bicycle_avatar.png';
+import TrailerAvatarImage from '../../../assets/trailer_avatar.png';
+import MotorbikeAvatarImage from '../../../assets/motorbike_avatar.png';
+import ScooterAvatarImage from '../../../assets/scooter_avatar.png';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function TrackerListItem({
@@ -33,12 +36,27 @@ export default function TrackerListItem({
 		return `${dd}-${mm}-${yyyy}`;
 	}
 
+	function getTypeIcon() {
+		switch (tracker.type) {
+			case 'fiets':
+				return BicycleAvatarImage;
+			case 'aanhangwagen':
+				return TrailerAvatarImage;
+			case 'motorfiets':
+				return MotorbikeAvatarImage;
+			case 'scooter':
+				return ScooterAvatarImage;
+			default:
+				return BicycleAvatarImage;
+		}
+	}
+
 	return (
 		<ListItem.Accordion
 			content={
 				<>
 					<Avatar
-						source={BicycleAvatarImage}
+						source={getTypeIcon()}
 						size={35}
 						rounded
 						avatarStyle={styles.avatar}
@@ -72,6 +90,18 @@ export default function TrackerListItem({
 							</ListItem.Subtitle>
 						</ListItem>
 					))}
+					<TouchableOpacity
+						onPress={() => navigation.navigate('Maps', { tracker })}
+					>
+						<ListItem
+							key={tracker.id + '-view'}
+							style={styles.editContainer}
+						>
+							<ListItem.Title style={styles.editTitle}>
+								View <MaterialIcons name="remove-red-eye" />
+							</ListItem.Title>
+						</ListItem>
+					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() =>
 							navigation.navigate('TrackerEdit', { tracker })

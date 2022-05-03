@@ -12,7 +12,6 @@ export type Coords = {
 };
 
 export type Log = {
-	userId: string;
 	trackerId: string;
 	latitude: number;
 	longitude: number;

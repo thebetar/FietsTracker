@@ -6,18 +6,18 @@ import { Tracker } from '../../types';
 import axios from '../../axios';
 import TrackerListItem from '../components/Trackers/TrackerListItem';
 
-export default function TrackersScreen({ navigation }: any) {
+export default function TrackersScreen({ navigation, route }: any) {
 	const [trackers, setTrackers] = useState<Tracker[]>([]);
 
 	useEffect(() => {
 		getTrackers();
-	}, []);
+	}, [route?.params?.tracker]);
 
 	async function getTrackers() {
 		try {
 			const {
 				data: { trackers }
-			} = await axios.get('/tracking/trackers');
+			} = await axios.get('/trackers');
 			setTrackers(trackers);
 		} catch (error) {
 			console.error(error);
