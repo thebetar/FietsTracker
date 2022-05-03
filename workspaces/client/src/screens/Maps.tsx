@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import MapView, { Region, Marker } from 'react-native-maps';
@@ -97,9 +97,11 @@ export default function MapsScreen({
 		};
 	}
 
-	useFocusEffect(() => {
-		getCoords();
-	});
+	useFocusEffect(
+		useCallback(() => {
+			getCoords();
+		}, [route?.params])
+	);
 
 	return (
 		<View style={styles.mapsContainer}>

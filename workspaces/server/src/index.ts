@@ -10,7 +10,7 @@ import { config as dotEnvConfig } from 'dotenv';
 
 dotEnvConfig();
 
-const PORT = 3000;
+const PORT = process.env.HTTP_PORT;
 const app = express();
 
 app.use(cors());
@@ -38,7 +38,7 @@ app.listen(PORT || 3000, async () => {
 
 async function openTunnel() {
 	const tunnel = await localtunnel({
-		port: PORT || 3000,
+		port: Number(PORT) || 3000,
 		subdomain: 'lora-fiets-tracker-marcopolo'
 	});
 

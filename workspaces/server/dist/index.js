@@ -49,7 +49,7 @@ var auth_1 = __importDefault(require("./middleware/auth"));
 var prisma_1 = __importDefault(require("./services/prisma"));
 var dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-var PORT = 3000;
+var PORT = process.env.HTTP_PORT;
 var app = (0, express_1["default"])();
 app.use((0, cors_1["default"])());
 app.use(express_1["default"].json());
@@ -64,7 +64,7 @@ app.listen(PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 prisma_1["default"].init();
-                console.log("App running on port ".concat(PORT || 3000));
+                console.log("App running on port " + (PORT || 3000));
                 if (process.env.DEV === 'true') {
                     return [2];
                 }
@@ -81,15 +81,11 @@ function openTunnel() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4, (0, localtunnel_1["default"])({
-                        port: PORT || 3000,
+                        port: Number(PORT) || 3000,
                         subdomain: 'lora-fiets-tracker-marcopolo'
                     })];
                 case 1:
                     tunnel = _a.sent();
-                    console.log("Localtunnel running on ".concat(tunnel.url));
-                    tunnel.on('close', function () {
-                        console.log('Localtunnel closed');
-                    });
                     return [2];
             }
         });
