@@ -64,7 +64,7 @@ app.listen(PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 prisma_1["default"].init();
-                console.log("App running on port " + (PORT || 3000));
+                console.log("App running on port ".concat(PORT || 3000));
                 if (process.env.DEV === 'true') {
                     return [2];
                 }
@@ -82,10 +82,14 @@ function openTunnel() {
             switch (_a.label) {
                 case 0: return [4, (0, localtunnel_1["default"])({
                         port: Number(PORT) || 3000,
-                        subdomain: 'lora-fiets-tracker-marcopolo'
+                        subdomain: 'lora-fiets-tracker-marcopolo-amsterdam'
                     })];
                 case 1:
                     tunnel = _a.sent();
+                    console.log("Localtunnel running on ".concat(tunnel.url));
+                    tunnel.on('close', function () {
+                        console.log('Localtunnel closed');
+                    });
                     return [2];
             }
         });

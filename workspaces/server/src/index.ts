@@ -39,7 +39,7 @@ app.listen(PORT || 3000, async () => {
 async function openTunnel() {
 	const tunnel = await localtunnel({
 		port: Number(PORT) || 3000,
-		subdomain: 'lora-fiets-tracker-marcopolo'
+		subdomain: 'lora-fiets-tracker-marcopolo-amsterdam'
 	});
 
 	console.log(`Localtunnel running on ${tunnel.url}`);

@@ -5,9 +5,13 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { Coords, Log, Tracker } from '../../types';
-import BicycicleImage from '../../assets/bicycle.png';
 import axios from '../../axios';
+
+import { Coords, Log, Tracker } from '../../types';
+import BicycleImage from '../../assets/bicycle.png';
+import TrailerImage from '../../assets/trailer.png';
+import MotorbikeImage from '../../assets/motorbike_avatar.png';
+import ScooterImage from '../../assets/scooter.png';
 
 export default function MapsScreen({
 	navigate,
@@ -97,6 +101,21 @@ export default function MapsScreen({
 		};
 	}
 
+	function getTrackerImage() {
+		switch (tracker?.type) {
+			case 'fiets':
+				return BicycleImage;
+			case 'aanhangwagen':
+				return TrailerImage;
+			case 'motorfiets':
+				return MotorbikeImage;
+			case 'scooter':
+				return ScooterImage;
+			default:
+				return BicycleImage;
+		}
+	}
+
 	useFocusEffect(
 		useCallback(() => {
 			getCoords();
@@ -119,9 +138,9 @@ export default function MapsScreen({
 				region={getRegion()}
 			>
 				<Marker
-					title={'Uw fiets'}
+					title={'Uw tracker'}
 					coordinate={coords}
-					image={BicycicleImage}
+					image={getTrackerImage()}
 				/>
 			</MapView>
 			<View>
