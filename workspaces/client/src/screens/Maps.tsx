@@ -4,6 +4,8 @@ import { Text, Button } from 'react-native-elements';
 import MapView, { Region, Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import axios from '../../axios';
 
@@ -21,6 +23,7 @@ export default function MapsScreen({
 	route: any;
 }) {
 	const [coords, setCoords] = useState<Coords>(DEFAULT_COORDS);
+	const [curLocation, setCurLocation] = useState<Coords>();
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [tracker, setTracker] = useState<Tracker | null>(null);
 
@@ -116,6 +119,17 @@ export default function MapsScreen({
 		}
 	}
 
+	async function getCurLocation() {
+		let { status } = await Location.requestForegroundPermissionsAsync();
+		if (status !== 'granted') {
+			setErrorMessage('Huidige locatie geweigerd');
+			return;
+		}
+
+		let location = await Location.getCurrentPositionAsync({});
+		setCurLocation(location.coords as Coords);
+	}
+
 	useFocusEffect(
 		useCallback(() => {
 			getCoords();
@@ -142,6 +156,11 @@ export default function MapsScreen({
 					coordinate={coords}
 					image={getTrackerImage()}
 				/>
+				{curLocation ? (
+					<Marker title={'Uw locatie'} coordinate={curLocation}>
+						<MaterialIcons name="my-location" />
+					</Marker>
+				) : null}
 			</MapView>
 			<View>
 				<Text h4 h4Style={styles.error}>
