@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
-import MapView, { Region, Marker } from 'react-native-maps';
+import MapView, { Region, Marker, Polyline } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
@@ -12,7 +12,7 @@ import axios from '../../axios';
 import { Coords, Log, Tracker } from '../../types';
 import BicycleImage from '../../assets/bicycle.png';
 import TrailerImage from '../../assets/trailer.png';
-import MotorbikeImage from '../../assets/motorbike_avatar.png';
+import MotorbikeImage from '../../assets/motorbike.png';
 import ScooterImage from '../../assets/scooter.png';
 
 export default function MapsScreen({
@@ -132,6 +132,8 @@ export default function MapsScreen({
 
 	useFocusEffect(
 		useCallback(() => {
+			getCurLocation();
+
 			getCoords();
 		}, [route?.params])
 	);
@@ -157,9 +159,16 @@ export default function MapsScreen({
 					image={getTrackerImage()}
 				/>
 				{curLocation ? (
-					<Marker title={'Uw locatie'} coordinate={curLocation}>
-						<MaterialIcons name="my-location" />
-					</Marker>
+					<>
+						<Marker title={'Uw locatie'} coordinate={curLocation}>
+							<MaterialIcons name="my-location" size={20} />
+						</Marker>
+						<Polyline
+							coordinates={[coords, curLocation]}
+							strokeWidth={2}
+							lineDashPattern={[1, 5, 5, 5]}
+						/>
+					</>
 				) : null}
 			</MapView>
 			<View>
